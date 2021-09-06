@@ -1,0 +1,66 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux.hdl
+
+/** 
+ * Multiplexor:
+ * out = a if sel == 0
+ *       b otherwise
+ */
+
+CHIP Mux {
+    IN a, b, sel;
+    OUT out;
+
+    PARTS:
+    /*
+	 * DNF optimization
+	 * 
+	 * (Not(a) And b And sel) Or (a And Not(b) And Not(sel)) Or
+	 * (a And b And Not(sel)) Or (a And b And sel)
+	 *
+	 * Using: a And (b Or c) = (a And b) Or (a And c)
+	 *
+	 * (Not(a) And b And sel) Or (a And Not(b) And Not(sel)) Or
+	 * ((a And b) And (sel or Not(sel)))
+	 *
+	 * Step: sel or Not(sel) is 1
+	 *
+	 * (Not(a) And b And sel) Or (a And Not(b) And Not(sel)) Or
+	 * (a And b)
+	 *
+	 * Step: (Not(a) And b And sel) - a is irrelevant, it suffices
+	 *       that b And sel is 1
+	 *
+	 * (b And sel) Or (a And Not(b) And Not(sel)) Or (a And b)
+	 *
+	 * Using: a And (b Or c) = (a And b) Or (a And c)
+	 *
+	 * (b And (a Or sel)) Or (a And Not(b) And Not(sel))
+	 *
+	 * Using: De Morgan's law on Not(b) And Not(sel)
+	 *
+	 * (b And (a Or sel)) Or (a And Not(b Or sel))
+	 * 
+	 */
+	/* Left side */
+	//Or(a=a, b=sel, out=aOrsel);
+	//And(a=b, b=aOrsel, out=leftside);
+
+	/* Right side */
+	//Or(a=b, b=sel, out=bOrsel);
+	//Not(in=bOrsel, out=NotbOrsel);
+	//And(a=a, b=NotbOrsel, out=rightside);
+
+	//Or(a=leftside, b=rightside, out=out);
+
+	/* By looking at table, you can notice that:
+	 *
+	 * (b And sel) Or (a And Not(sel))
+	 */
+	Not(in=sel, out=Notsel);
+	And(a=b, b=sel, out=bAndsel);
+	And(a=a, b=Notsel, out=aAndNotsel);
+	Or(a=bAndsel, b=aAndNotsel, out=out);
+}

@@ -1,1 +1,1 @@
-My solutions to [https://www.nand2tetris.org/](nand2tetris) course.
+My solutions to [nand2tetris](https://www.nand2tetris.org/) course.
